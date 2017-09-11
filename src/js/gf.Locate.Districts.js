@@ -13,7 +13,7 @@
         $('head').append(style);
     });
     $.ajax({
-        url: 'node_modules/gf.locate.basinnew/src/css/gf.Locate.BasinNew.css',
+        url: 'node_modules/gf.locate.districts/src/css/gf.Locate.Districts.css',
         dataType: 'text',
         cache: true
     }).then(function(data){
