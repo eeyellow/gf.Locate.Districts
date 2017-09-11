@@ -1,18 +1,18 @@
-.gfLocateCoordinate-Row{
+.gfLocateDistricts-Row{
     display: flex;
     padding: 10px 20px 0 20px;
     flex-direction: column;
 }
-.gfLocateCoordinate-Label{
+.gfLocateDistricts-Label{
     flex: 1;
     text-align: center;
     height: 28px;
     line-height: 28px;
 }
-.gfLocateCoordinate-Select{
+.gfLocateDistricts-Select{
     flex: 1;
 }
-.gfLocateCoordinate-Input{
+.gfLocateDistricts-Input{
     background-color: #fff;
     border: 1px solid #aaa;
     border-radius: 4px;
@@ -22,7 +22,7 @@
     text-align: right;
     padding-right: 10px;
 }
-.gfLocateCoordinate-Button{
+.gfLocateDistricts-Button{
     flex: 1;
     text-align: center;
     border: 1px solid #aaa;
@@ -33,7 +33,7 @@
     height: 28px;
     line-height: 28px;
 }
-.gfLocateCoordinate-Button:hover{
+.gfLocateDistricts-Button:hover{
     background-color: #16A085;
     color: #FFFFFF;
 }
