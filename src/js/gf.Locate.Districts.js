@@ -116,15 +116,53 @@
                     .find('.gfLocateDistricts-Select1')
                         .change(function(e){
                             o.target.find('.gfLocateDistricts-Select2').empty();
-                            o._getOption({ rivername: o.target.find('.gfLocateDistricts-Select1').val() }, "subbasinna", "subbasinna", o.target.find('.gfLocateDistricts-Select2'));
+                            o.target.find('.gfLocateDistricts-Select3').empty();
+                            o._getOption(
+                                {
+                                    city: o.target.find('.gfLocateDistricts-Select1').val()
+                                },
+                                "value",
+                                "name",
+                                o.target.find('.gfLocateDistricts-Select2')
+                            );
+                        })
+                        .end()
+                    .find('.gfLocateDistricts-Select2')
+                        .change(function(e){
+                            o.target.find('.gfLocateDistricts-Select3').empty();
+                            o._getOption(
+                                {
+                                    city: o.target.find('.gfLocateDistricts-Select1').val(),
+                                    town: o.target.find('.gfLocateDistricts-Select2').val()
+                                },
+                                "value",
+                                "name",
+                                o.target.find('.gfLocateDistricts-Select3')
+                            );
                         })
                         .end()
                     .find('.gfLocateDistricts-Button')
                         .click(function(e){
-                            o._getLatLng({
-                                rivername: o.target.find('.gfLocateDistricts-Select1').val(),
-                                subbasinna: o.target.find('.gfLocateDistricts-Select2').val()
-                            });
+                            var data = {
+                                locate: "Y"
+                            };
+                            var city = o.target.find('.gfLocateDistricts-Select1').val();
+                            var town = o.target.find('.gfLocateDistricts-Select2').val();
+                            var village = o.target.find('.gfLocateDistricts-Select3').val();
+
+                            if(city != undefined && city != "請選擇"){
+                                data.city = city;
+                            }
+
+                            if(town != undefined && town != "請選擇"){
+                                data.town = town;
+                            }
+
+                            if(village != undefined && village != "請選擇"){
+                                data.village = village;
+                            }
+
+                            o._getLatLng(data);
                         })
                         .end()
             },
@@ -156,14 +194,18 @@
                     data: _data,
                     dataType: 'JSON',
                     success: function(res){
-                        o.target.trigger("onClick", {
-                            x: res[0]["x_84"] * 1,
-                            y: res[0]["y_84"] * 1,
-                            content:
-                                o.target.find('.gfLocateDistricts-Select1 option:selected').text() + " > " +
-                                o.target.find('.gfLocateDistricts-Select2 option:selected').text() + "<br />" +
-                                "( " + res[0]['x_84'] + " , " + res[0]['y_84'] + " )"
-                        });
+                        var value = res[0].value;
+                        var name = res[0].name;
+                        var geom = JSON.parse(res[0].geom);
+                        var r = {
+                            "type": "Feature",
+                            "properties": {
+                              "name": name,
+                              "value": value
+                            },
+                            "geometry": geom
+                        };
+                        o.target.trigger("onClick", r);
                     }
                 })
             },
