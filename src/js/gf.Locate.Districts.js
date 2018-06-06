@@ -48,7 +48,7 @@
 
         //預設參數
         gfLocateDistricts.defaults = {
-            url: 'http://203.74.124.83/d3_new/php/getDistrictList.php',
+            url: '',
             css: {
                 'width': '100%',
 
@@ -56,7 +56,8 @@
                 'overflow-y': 'hidden',
                 'overflow-x': 'hidden',
             },
-
+            valueField: "id",
+            nameField: "name",
             onClick: undefined,
             onInitComplete: undefined
 
@@ -81,7 +82,7 @@
                 var row1 = $('<div/>', { 'class': 'gfLocateDistricts-Row' });
                 var lbl1 = $('<label/>', { 'class': 'gfLocateDistricts-Label', 'text': '縣市' });
                 var sel1 = $('<select/>', { 'class': 'gfLocateDistricts-Select gfLocateDistricts-Select1' });
-                o._getOption({}, "value", "name", sel1);
+                o._getOption({}, o.opt.valueField, o.opt.nameField, sel1);
                 row1.append(lbl1);
                 row1.append(sel1);
 
@@ -121,8 +122,8 @@
                                 {
                                     city: o.target.find('.gfLocateDistricts-Select1').val()
                                 },
-                                "value",
-                                "name",
+                                o.opt.valueField,
+                                o.opt.nameField,
                                 o.target.find('.gfLocateDistricts-Select2')
                             );
                         })
@@ -135,8 +136,8 @@
                                     city: o.target.find('.gfLocateDistricts-Select1').val(),
                                     town: o.target.find('.gfLocateDistricts-Select2').val()
                                 },
-                                "value",
-                                "name",
+                                o.opt.valueField,
+                                o.opt.nameField,
                                 o.target.find('.gfLocateDistricts-Select3')
                             );
                         })
@@ -169,10 +170,19 @@
 
             _getOption: function(_data, _valueField, _textField, _container){
                 var o = this;
+                var attach = "";
+                if (_data.city != undefined) {
+                    attach += "/" + _data.city;
+                }
+                if (_data.town != undefined) {
+                    attach += "/" + _data.town;
+                }
+                if (_data.village != undefined) {
+                    attach += "/" + _data.village;
+                }
                 $.ajax({
-                    url: o.opt.url,
-                    type: 'POST',
-                    data: _data,
+                    url: o.opt.url + attach,
+                    type: 'GET',
                     dataType: 'JSON',
                     success: function(res){
                         var defaultOption = $('<option/>', { value: "請選擇", text: "請選擇" });
@@ -188,14 +198,24 @@
             },
             _getLatLng: function(_data){
                 var o = this;
+                var attach = "";
+                if (_data.city != undefined) {
+                    attach += "/" + _data.city;
+                }
+                if (_data.town != undefined) {
+                    attach += "/" + _data.town;
+                }
+                if (_data.village != undefined) {
+                    attach += "/" + _data.village;
+                }
+                attach += "/geom";
                 $.ajax({
-                    url: o.opt.url,
-                    type: 'POST',
-                    data: _data,
+                    url: o.opt.url + attach,
+                    type: 'GET',
                     dataType: 'JSON',
-                    success: function(res){
-                        var value = res[0].value;
-                        var name = res[0].name;
+                    success: function (res) {
+                        var value = res[0][o.opt.valueField];
+                        var name = res[0][o.opt.nameField];
                         var geom = JSON.parse(res[0].geom);
                         var r = {
                             "type": "Feature",
