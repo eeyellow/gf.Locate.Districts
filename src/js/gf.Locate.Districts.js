@@ -5,7 +5,7 @@
     var gfLocateDistricts;
 
     $.ajax({
-        url: 'node_modules/select2/dist/css/select2.min.css',
+        url: 'node_modules/bootstrap-select/dist/css/bootstrap-select.min.css',
         dataType: 'text',
         cache: true
     }).then(function(data){
@@ -23,7 +23,7 @@
     //Load dependencies first
     $.when(
         $.ajax({
-            url: 'node_modules/select2/dist/js/select2.min.js',
+            url: 'node_modules/bootstrap-select/dist/js/bootstrap-select.min.js',
             dataType: 'script',
             cache: true
         })
@@ -107,49 +107,58 @@
                 o.target.append(row3);
                 o.target.append(row4);
 
-                sel1.select2();
-                sel2.select2();
-                sel3.select2();
+                sel1.selectpicker({
+                    title: '請選擇',
+                    width: '130px',
+                    dropupAuto: false
+                });
+                sel2.selectpicker({
+                    title: '請選擇',
+                    width: '130px',
+                    dropupAuto: false
+                });
+                sel3.selectpicker({
+                    title: '請選擇',
+                    width: '130px',
+                    dropupAuto: false
+                });
             },
             _event: function () {
                 var o = this;
                 o.target
-                    .find('.gfLocateDistricts-Select1')
-                        .change(function(e){
-                            o.target.find('.gfLocateDistricts-Select2').empty();
-                            o.target.find('.gfLocateDistricts-Select3').empty();
-                            o._getOption(
-                                {
-                                    city: o.target.find('.gfLocateDistricts-Select1').val()
-                                },
-                                o.opt.valueField,
-                                o.opt.nameField,
-                                o.target.find('.gfLocateDistricts-Select2')
-                            );
-                        })
-                        .end()
-                    .find('.gfLocateDistricts-Select2')
-                        .change(function(e){
-                            o.target.find('.gfLocateDistricts-Select3').empty();
-                            o._getOption(
-                                {
-                                    city: o.target.find('.gfLocateDistricts-Select1').val(),
-                                    town: o.target.find('.gfLocateDistricts-Select2').val()
-                                },
-                                o.opt.valueField,
-                                o.opt.nameField,
-                                o.target.find('.gfLocateDistricts-Select3')
-                            );
-                        })
-                        .end()
+
+                    .on('changed.bs.select', '.gfLocateDistricts-Select1', function () {
+                        o.target.find('.gfLocateDistricts-Select2').find('option').remove();
+                        o.target.find('.gfLocateDistricts-Select3').find('option').remove();
+                        o._getOption(
+                            {
+                                city: o.target.find('.gfLocateDistricts-Select1').selectpicker('val')
+                            },
+                            o.opt.valueField,
+                            o.opt.nameField,
+                            o.target.find('.gfLocateDistricts-Select2')
+                        );
+                    })
+                    .on('changed.bs.select', '.gfLocateDistricts-Select2', function () {
+                        o.target.find('.gfLocateDistricts-Select3').find('option').remove();
+                        o._getOption(
+                            {
+                                city: o.target.find('.gfLocateDistricts-Select1').selectpicker('val'),
+                                town: o.target.find('.gfLocateDistricts-Select2').selectpicker('val')
+                            },
+                            o.opt.valueField,
+                            o.opt.nameField,
+                            o.target.find('.gfLocateDistricts-Select3')
+                        );
+                    })
                     .find('.gfLocateDistricts-Button')
                         .click(function(e){
                             var data = {
                                 locate: "Y"
                             };
-                            var city = o.target.find('.gfLocateDistricts-Select1').val();
-                            var town = o.target.find('.gfLocateDistricts-Select2').val();
-                            var village = o.target.find('.gfLocateDistricts-Select3').val();
+                            var city = o.target.find('.gfLocateDistricts-Select1').selectpicker('val');
+                            var town = o.target.find('.gfLocateDistricts-Select2').selectpicker('val');
+                            var village = o.target.find('.gfLocateDistricts-Select3').selectpicker('val');
 
                             if(city != undefined && city != "請選擇"){
                                 data.city = city;
@@ -184,15 +193,17 @@
                     url: o.opt.url + attach,
                     type: 'GET',
                     dataType: 'JSON',
-                    success: function(res){
-                        var defaultOption = $('<option/>', { value: "請選擇", text: "請選擇" });
-                        _container.append(defaultOption);
-
+                    success: function (res) {
+                        _container.selectpicker('destroy');
+                        var html = "";
                         res.forEach(function(data){
-                            var option = $('<option/>', { value: data[_valueField], text: data[_textField] });
-                            _container.append(option);
+                            html += "<option value=" + data[_valueField] + ">" + data[_textField] + "</option>";
                         });
-                        _container.select2();
+                        _container.html(html).selectpicker({
+                            title: '請選擇',
+                            width: '130px',
+                            dropupAuto: false
+                        });
                     }
                 })
             },
